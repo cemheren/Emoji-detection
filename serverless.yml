@@ -1,0 +1,24 @@
+frameworkVersion: ">=1.2.1"
+
+service: emoji-detection
+
+provider:
+  name: aws
+  runtime: python2.7
+  stage: dev
+  region: us-west-2
+
+functions:
+  predict:
+    handler: index.handler
+    events:
+      - http:
+          path: /
+          method: get
+
+plugins:
+  - serverless-python-requirements
+
+# custom:
+#   pythonRequirements:
+#     zip: true

@@ -1,5 +1,10 @@
+try:
+    import unzip_requirements
+except ImportError:
+    pass
+
 import datetime
-import simplejson as sjson
+import json
 
 from scoreText import *
 
@@ -17,5 +22,5 @@ def handler(event, context):
         'timestamp': datetime.datetime.utcnow().isoformat()
     }
     return {'statusCode': 200,
-            'body': sjson.dumps(data),
+            'body': json.dumps(data),
             'headers': {'Content-Type': 'application/json'}}
