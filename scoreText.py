@@ -12,57 +12,61 @@ import example_helper
 import json
 import csv
 import numpy as np
+import tensorflow as tf
 from localdeepmoji.sentence_tokenizer import SentenceTokenizer
 from localdeepmoji.model_def import deepmoji_emojis
 
+PRETRAINED_PATH = './model/deepmoji_weights.hdf5'
+VOCAB_PATH = './model/vocabulary.json'
+
+maxlen = 30
+batch_size = 32
+
+def top_elements(array, k):
+    ind = np.argpartition(array, -k)[-k:]
+    return ind[np.argsort(array[ind])][::-1]
+
+print('Tokenizing using dictionary from {}'.format(VOCAB_PATH))
+with open(VOCAB_PATH, 'r') as f:
+    vocabulary = json.load(f)
+st = SentenceTokenizer(vocabulary, maxlen)
+
+model = deepmoji_emojis(maxlen, PRETRAINED_PATH)
+model._make_predict_function()
+graph = tf.get_default_graph()
+
 def score(sentence):
-    
-    PRETRAINED_PATH = './model/deepmoji_weights.hdf5'
-    VOCAB_PATH = './model/vocabulary.json'
-
-    maxlen = 30
-    batch_size = 32
-
-    def top_elements(array, k):
-        ind = np.argpartition(array, -k)[-k:]
-        return ind[np.argsort(array[ind])][::-1]
-
-    print('Tokenizing using dictionary from {}'.format(VOCAB_PATH))
-    with open(VOCAB_PATH, 'r') as f:
-        vocabulary = json.load(f)
-    st = SentenceTokenizer(vocabulary, maxlen)
-
 
     TEST_SENTENCES = [sentence]
 
     tokenized, _, _ = st.tokenize_sentences(TEST_SENTENCES)
 
     print('Loading model from {}.'.format(PRETRAINED_PATH))
-    model = deepmoji_emojis(maxlen, PRETRAINED_PATH)
     model.summary()
 
     # model.save("deepmoji_akif")
+    
+    with graph.as_default():
+        print('Running predictions.')
+        prob = model.predict(tokenized)
 
-    print('Running predictions.')
-    prob = model.predict(tokenized)
+        # Find top emojis for each sentence. Emoji ids (0-63)
+        # correspond to the mapping in emoji_overview.png
+        # at the root of the DeepMoji repo.
+        # print('Writing results to {}'.format(OUTPUT_PATH))
+        scores = []
+        for i, t in enumerate(TEST_SENTENCES):
+            t_tokens = tokenized[i]
+            t_score = [t]
+            t_prob = prob[i]
+            ind_top = top_elements(t_prob, 5)
+            t_score.append(sum(t_prob[ind_top]))
+            t_score.extend(ind_top)
+            t_score.extend([str(t_prob[ind]) for ind in ind_top])
+            scores.append(t_score)
+            print(t_score)
 
-    # Find top emojis for each sentence. Emoji ids (0-63)
-    # correspond to the mapping in emoji_overview.png
-    # at the root of the DeepMoji repo.
-    # print('Writing results to {}'.format(OUTPUT_PATH))
-    scores = []
-    for i, t in enumerate(TEST_SENTENCES):
-        t_tokens = tokenized[i]
-        t_score = [t]
-        t_prob = prob[i]
-        ind_top = top_elements(t_prob, 5)
-        t_score.append(sum(t_prob[ind_top]))
-        t_score.extend(ind_top)
-        t_score.extend([str(t_prob[ind]) for ind in ind_top])
-        scores.append(t_score)
-        print(t_score)
-
-    return scores;
+        return scores;
 
     # with open(OUTPUT_PATH, 'wb') as csvfile:
     #     writer = csv.writer(csvfile, delimiter=',', lineterminator='\n')

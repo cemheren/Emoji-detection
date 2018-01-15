@@ -11,7 +11,7 @@ from scoreText import *
 def handler(event, context):
     
     try:
-        result = score(u'Score me like one of your French girls.')
+        result = score(event['input'])
     except Exception, e:
         result = e
     
