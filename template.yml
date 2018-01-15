@@ -14,6 +14,8 @@ Resources:
     Properties:
       Handler: index.handler
       Runtime: python2.7
+      MemorySize: 512
+      Timeout: 10
       Role:
         Fn::ImportValue:
           !Join ['-', [!Ref 'ProjectId', !Ref 'AWS::Region', 'LambdaTrustRole']]
