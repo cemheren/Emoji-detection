@@ -15,22 +15,23 @@ import numpy as np
 from localdeepmoji.sentence_tokenizer import SentenceTokenizer
 from localdeepmoji.model_def import deepmoji_emojis
 
-PRETRAINED_PATH = './model/deepmoji_weights.hdf5'
-VOCAB_PATH = './model/vocabulary.json'
-
-maxlen = 30
-batch_size = 32
-
-def top_elements(array, k):
-    ind = np.argpartition(array, -k)[-k:]
-    return ind[np.argsort(array[ind])][::-1]
-
-print('Tokenizing using dictionary from {}'.format(VOCAB_PATH))
-with open(VOCAB_PATH, 'r') as f:
-    vocabulary = json.load(f)
-st = SentenceTokenizer(vocabulary, maxlen)
-
 def score(sentence):
+    
+    PRETRAINED_PATH = './model/deepmoji_weights.hdf5'
+    VOCAB_PATH = './model/vocabulary.json'
+
+    maxlen = 30
+    batch_size = 32
+
+    def top_elements(array, k):
+        ind = np.argpartition(array, -k)[-k:]
+        return ind[np.argsort(array[ind])][::-1]
+
+    print('Tokenizing using dictionary from {}'.format(VOCAB_PATH))
+    with open(VOCAB_PATH, 'r') as f:
+        vocabulary = json.load(f)
+    st = SentenceTokenizer(vocabulary, maxlen)
+
 
     TEST_SENTENCES = [sentence]
 

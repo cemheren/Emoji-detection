@@ -1,10 +1,14 @@
-import simplejson as sjson
 import datetime
+import simplejson as sjson
 
 from scoreText import *
 
 def handler(event, context):
-    result = score(u'Score me like one of your French girls.')
+    
+    try:
+        result = score(u'Score me like one of your French girls.')
+    except Exception, e:
+        result = e
     
     print result
 
