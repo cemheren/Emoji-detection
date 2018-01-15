@@ -19,6 +19,6 @@ functions:
 plugins:
   - serverless-python-requirements
 
-# custom:
-#   pythonRequirements:
-#     zip: true
+custom:
+  pythonRequirements:
+    zip: true
