@@ -13,6 +13,7 @@ import json
 import csv
 import numpy as np
 import tensorflow as tf
+import emoji
 from localdeepmoji.sentence_tokenizer import SentenceTokenizer
 from localdeepmoji.model_def import deepmoji_emojis
 
@@ -57,12 +58,11 @@ def score(sentence):
         scores = []
         for i, t in enumerate(TEST_SENTENCES):
             t_tokens = tokenized[i]
-            t_score = [t]
-            t_prob = prob[i]
-            ind_top = top_elements(t_prob, 5)
-            t_score.append(sum(t_prob[ind_top]))
-            t_score.extend(ind_top)
-            t_score.extend([str(t_prob[ind]) for ind in ind_top])
+            t_score = {
+                'sentence' : [t],
+                'prob' : prob[i],
+                'top5' : top_elements(prob[i], 5)
+            }
             scores.append(t_score)
             print(t_score)
 
