@@ -33,9 +33,9 @@ emojiList = {
 def main(strings):
     
     result = score(strings)
-    top1 = result[0]['top5'][0]
+    top5 = result[0]['top5']
 
-    return str(top1)
+    return json.dumps(top5.tolist())
 
 @app.route("/x/<strings>")
 def hello(strings):
