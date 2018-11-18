@@ -12,10 +12,10 @@ def handler(event, context):
     
     try:
         result = score(event['input'])
-    except Exception, e:
+    except Exception as e:
         result = e
     
-    print result
+    print(result)
 
     data = {
         'output': result,
