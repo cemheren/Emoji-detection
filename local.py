@@ -87,6 +87,17 @@ def main(strings):
 
     return json.dumps(l, ensure_ascii=False)
 
+@app.route("/p/<strings>")
+def rawmain(strings):
+    
+    result = score(strings)[0]['prob'].tolist()
+    result.sort(reverse = True)
+    # top5 = result[0]['top5']
+    # l = map(lambda x: emojiList[x+1], top5.tolist());
+
+    return json.dumps(result, ensure_ascii=False)
+
+
 @app.route("/x/<strings>")
 def hello(strings):
     event = {
